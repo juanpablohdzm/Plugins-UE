@@ -2,6 +2,13 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogNotificationSystem, All, All)
 
+UNotificationSystem::UNotificationSystem() :
+OnNotificationAdded({{FName("All"), FNotificationCallback()}}),
+OnNotificationCleared({{FName("All"), FNotificationCallback()}})
+{
+	
+}
+
 UNotificationSystem* UNotificationSystem::Get(const UObject* WorldContext)
 {
 	if (const UWorld* world = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::ReturnNull))
@@ -115,20 +122,28 @@ void UNotificationSystem::AssignOnNotificationCleared(const UScriptStruct* Paylo
 
 void UNotificationSystem::BroadcastOnNotificationAdded(const FName& Name, const FNotificationHandle& Handle)
 {
-	if (OnNotificationAdded.Contains(Name))
+	if (OnNotificationAdded.Contains(Name) && OnNotificationAdded[Name].IsBound())
 	{
 		OnNotificationAdded[Name].Broadcast(Handle);
 	}
-	OnNotificationAdded[FName(TEXT("All"))].Broadcast(Handle);
+
+	if (OnNotificationAdded[FName(TEXT("All"))].IsBound())
+	{
+		OnNotificationAdded[FName(TEXT("All"))].Broadcast(Handle);
+	}
 }
 
 void UNotificationSystem::BroadcastOnNotificationCleared(const FName& Name, const FNotificationHandle& Handle)
 {
-	if (OnNotificationCleared.Contains(Name))
+	if (OnNotificationCleared.Contains(Name) && OnNotificationCleared[Name].IsBound())
 	{
 		OnNotificationAdded[Name].Broadcast(Handle);
 	}
-	OnNotificationCleared[FName(TEXT("All"))].Broadcast(Handle);
+
+	if (OnNotificationCleared[FName(TEXT("All"))].IsBound())
+	{
+		OnNotificationCleared[FName(TEXT("All"))].Broadcast(Handle);
+	}
 }
 
 UNotification* UNotificationSystem::CreateNotification(UScriptStruct* ScriptStruct, uint8* StructData, FNotificationHandle& OutNotificationHandle)

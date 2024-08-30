@@ -14,6 +14,9 @@ class NOTIFICATIONSYSTEMMODULE_API UNotificationSystem : public UGameInstanceSub
 {
 	GENERATED_BODY()
 public:
+
+	UNotificationSystem();
+	
 	static UNotificationSystem* Get(const UObject* WorldContext);
 
 	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "PayloadStruct"))
