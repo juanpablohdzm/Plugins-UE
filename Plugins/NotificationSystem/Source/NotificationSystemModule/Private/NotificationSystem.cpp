@@ -16,7 +16,7 @@ UNotificationSystem* UNotificationSystem::Get(const UObject* WorldContext)
 		return UGameInstance::GetSubsystem<UNotificationSystem>(world->GetGameInstance());
 	}
 
-	UE_LOG(LogNotificationSystem, Warning, TEXT("Can not get subsystem because Uworld pointer is null"));
+	UE_LOG(LogNotificationSystem, Warning, TEXT("Can not get subsystem because UWorld pointer is null"));
 	return nullptr;
 }
 
