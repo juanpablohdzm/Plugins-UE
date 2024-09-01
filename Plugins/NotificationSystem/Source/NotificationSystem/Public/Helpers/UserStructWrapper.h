@@ -5,6 +5,9 @@
 #include "UObject/StructOnScope.h"
 #include "UserStructWrapper.generated.h"
 
+/**
+ * Helper class to serialize and deserialize a USTRUCT
+ */
 USTRUCT()
 struct NOTIFICATIONSYSTEMMODULE_API FUserStructWrapper
 {
@@ -15,10 +18,9 @@ public:
 	
 	bool CopyFromStruct(FStructOnScope& StructValue);
 	bool CopyToStruct(FStructOnScope& StructValue) const;
-	
-	void ResetToDefaults();
 
-protected:
+private:
+	void ResetToDefaults();
 
 	UPROPERTY()
 	UScriptStruct* UserStructClass = nullptr;

@@ -8,14 +8,6 @@
 #include "UObject/Object.h"
 #include "Notification.generated.h"
 
-UENUM(BlueprintType)
-enum class ENotificationActionType : uint8
-{
-	Accept,
-	Decline,
-	Dismiss
-};
-
 USTRUCT()
 struct FNotificationPayload
 {
@@ -33,13 +25,11 @@ private:
 	
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNotificationActionDelegate);
-DECLARE_DYNAMIC_DELEGATE(FNotificationAction);
 /**
- * 
+ * Wrapper class to hold the payload struct and the identifier. 
  */
 UCLASS(BlueprintType)
-class NOTIFICATIONSYSTEMMODULE_API UNotification : public UObject
+class NOTIFICATIONSYSTEMMODULE_API UNotification final : public UObject
 {
 	GENERATED_BODY()
 private:
@@ -49,38 +39,41 @@ public:
 
 	static UNotification* Create(UScriptStruct* PayloadStruct, uint8* PayloadData);
 
-	UFUNCTION(BlueprintCallable)
-	void AddNotificationAction(ENotificationActionType ActionType, FNotificationAction Action);
-
-	UFUNCTION(BlueprintCallable, meta = (ExpandBoolAsExecs = "ReturnValue"))
-	bool RemoveNotificationAction(ENotificationActionType ActionType, FNotificationAction Action);
-
-	UFUNCTION(BlueprintCallable)
-	void BroadcastNotificationAction(ENotificationActionType ActionType);
-
-	UFUNCTION(BlueprintCallable, meta = (ExpandBoolAsExecs = "ReturnValue"))
-	bool ClearNotificationAction(ENotificationActionType ActionType);
-
+	/// Get Payload
+	/// @param PayloadStruct Out information of the notification
+	/// @return if it succeeded or not
 	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "PayloadStruct", ExpandBoolAsExecs = "ReturnValue"))
 	bool GetPayload(UScriptStruct*& PayloadStruct);
 	DECLARE_FUNCTION(execGetPayload);
 
+	/// Native version of get payload (meant for C++)
+	/// @tparam UStruct Type of the struct to get
+	/// @param Payload Out information of the notification
+	/// @return If it succeeded or not
 	template <typename UStruct> bool GetPayload(UStruct& Payload) const;
 
+	///
+	/// Check if the payload of the notification is of the passed type
+	/// @param PayloadStruct Struct type to be compared
 	UFUNCTION(BlueprintCallable)
 	bool IsPayloadOfType(UScriptStruct* PayloadStruct) const;
+	
+	/// Native version of IsPayloadOfType (meant for C++)
+	/// @tparam UStruct Type to be compared 
 	template <typename UStruct> bool IsPayloadOfType() const;
 
+	/// GetHandle
+	/// @return The handle identifier of the notification
 	UFUNCTION(BlueprintCallable)
 	FNotificationHandle GetHandle() const { return Handle;}
 
+	/// GetPayloadTypeName
+	/// @return The name of the payload
+	UFUNCTION(BlueprintCallable)
 	FName GetPayloadTypeName() const;
 private:
 
 	bool GetPayload(UScriptStruct* PayloadStruct, uint8* PayloadData) const;
-
-	UPROPERTY(Transient)
-	TMap<ENotificationActionType, FNotificationActionDelegate> NotificationActions;
 
 	UPROPERTY(Transient)
 	FNotificationPayload NotificationPayload;
