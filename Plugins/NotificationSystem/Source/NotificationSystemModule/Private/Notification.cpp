@@ -35,44 +35,6 @@ UNotification* UNotification::Create(UScriptStruct* PayloadStruct, uint8* Payloa
 	return notification;
 }
 
-void UNotification::AddNotificationAction(ENotificationActionType ActionType, FNotificationAction Action)
-{
-	if (NotificationActions.Contains(ActionType))
-	{
-		NotificationActions[ActionType].Add(Action);
-		return;
-	}
-
-	FNotificationActionDelegate delegate;
-	delegate.Add(Action);
-	NotificationActions.Add(ActionType, delegate);
-}
-
-bool UNotification::RemoveNotificationAction(ENotificationActionType ActionType, FNotificationAction Action)
-{
-	if (NotificationActions.Contains(ActionType))
-	{
-		NotificationActions[ActionType].Remove(Action);
-		return true;
-	}
-	return false;
-}
-
-void UNotification::BroadcastNotificationAction(ENotificationActionType ActionType)
-{
-	NotificationActions[ActionType].Broadcast();
-}
-
-bool UNotification::ClearNotificationAction(ENotificationActionType ActionType)
-{
-	if (NotificationActions.Contains(ActionType))
-	{
-		NotificationActions[ActionType].Clear();
-		return true;
-	}
-	return false;
-}
-
 DEFINE_FUNCTION(UNotification::execGetPayload)
 {
 	Stack.Step(Stack.Object, nullptr);
