@@ -19,6 +19,11 @@
 			"Name": "NotificationSystemModule",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "PopupSystemModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }
