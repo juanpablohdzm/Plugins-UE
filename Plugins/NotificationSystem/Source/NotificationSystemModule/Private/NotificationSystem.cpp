@@ -92,32 +92,14 @@ void UNotificationSystem::AssignOnNotificationAdded(const UScriptStruct* Payload
 {
 	const FName payloadTypeName = PayloadType ? PayloadType->GetFName() : FName(TEXT("All"));
 	const FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
-	if (!OnNotificationAdded.Contains(payloadTypeName))
-	{
-		FNotificationCallback callback;
-		callback.Add(nativeAction);
-		OnNotificationAdded.Add(payloadTypeName, callback);
-	}
-	else
-	{
-		OnNotificationAdded[payloadTypeName].Add(nativeAction);
-	}
+	AssignOnNotificationAddedImplementation(payloadTypeName, MoveTemp(nativeAction));
 }
 
 void UNotificationSystem::AssignOnNotificationCleared(const UScriptStruct* PayloadType, FNotificationSystemAction Action)
 {
 	const FName payloadTypeName = PayloadType ? PayloadType->GetFName() : FName(TEXT("All"));
 	const FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
-	if (!OnNotificationAdded.Contains(payloadTypeName))
-	{
-		FNotificationCallback callback;
-		callback.Add(nativeAction);
-		OnNotificationCleared.Add(payloadTypeName, callback);
-	}
-	else
-	{
-		OnNotificationCleared[payloadTypeName].Add(nativeAction);
-	}
+	AssignOnNotificationClearedImplementation(payloadTypeName, MoveTemp(nativeAction));
 }
 
 void UNotificationSystem::BroadcastOnNotificationAdded(const FName& Name, const FNotificationHandle& Handle)
@@ -143,6 +125,34 @@ void UNotificationSystem::BroadcastOnNotificationCleared(const FName& Name, cons
 	if (OnNotificationCleared[FName(TEXT("All"))].IsBound())
 	{
 		OnNotificationCleared[FName(TEXT("All"))].Broadcast(Handle);
+	}
+}
+
+void UNotificationSystem::AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action)
+{
+	if (!OnNotificationAdded.Contains(PayloadTypeName))
+	{
+		FNotificationCallback callback;
+		callback.Add(Action);
+		OnNotificationAdded.Add(PayloadTypeName, callback);
+	}
+	else
+	{
+		OnNotificationAdded[PayloadTypeName].Add(Action);
+	}
+}
+
+void UNotificationSystem::AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action)
+{
+	if (!OnNotificationAdded.Contains(PayloadTypeName))
+	{
+		FNotificationCallback callback;
+		callback.Add(Action);
+		OnNotificationCleared.Add(PayloadTypeName, callback);
+	}
+	else
+	{
+		OnNotificationCleared[PayloadTypeName].Add(Action);
 	}
 }
 

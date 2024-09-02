@@ -79,13 +79,16 @@ public:
 	/// @param Action The callback to be called.
 	UFUNCTION(BlueprintCallable)
 	void AssignOnNotificationAdded(const UScriptStruct* PayloadType, FNotificationSystemAction Action);
+	template <typename UStruct>
+	void AssignOnNotificationAddedNative(FNotificationSystemActionNative Action);
 
 	/// Assign a callback for when a notification is cleared
 	/// @param PayloadType The type of the payload to subscriber to, NOTE: You can receive the event for everyone if left nullptr
 	/// @param Action The callback to be called. 
 	UFUNCTION(BlueprintCallable)
 	void AssignOnNotificationCleared(const UScriptStruct* PayloadType, FNotificationSystemAction Action);
-
+	template <typename UStruct>
+	void AssignOnNotificationClearedNative(FNotificationSystemActionNative Action);
 private:
 
 	using FNotificationCallback = TMulticastDelegate<void(FNotificationHandle)>;
@@ -96,6 +99,9 @@ private:
 
 	void BroadcastOnNotificationAdded(const FName& Name, const FNotificationHandle& Handle);
 	void BroadcastOnNotificationCleared(const FName& Name, const FNotificationHandle& Handle);
+
+	void AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action);
+	void AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action);
 
 	UNotification* CreateNotification(UScriptStruct* ScriptStruct, uint8* StructData, FNotificationHandle& OutNotificationHandle);
 };
@@ -110,4 +116,16 @@ template <typename UStruct>
 TArray<FNotificationHandle> UNotificationSystem::GetNotificationHandlesByType() const
 {
 	return GetNotificationHandlesByType(UStruct::StaticStruct());
+}
+
+template <typename UStruct>
+void UNotificationSystem::AssignOnNotificationAddedNative(FNotificationSystemActionNative Action)
+{
+	AssignOnNotificationAddedImplementation(UStruct::StaticStruct()->GetFName(), MoveTemp(Action));
+}
+
+template <typename UStruct>
+void UNotificationSystem::AssignOnNotificationClearedNative(FNotificationSystemActionNative Action)
+{
+	AssignOnNotificationClearedImplementation(UStruct::StaticStruct()->GetFName(), MoveTemp(Action));
 }
