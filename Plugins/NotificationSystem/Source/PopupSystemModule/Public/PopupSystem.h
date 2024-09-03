@@ -28,23 +28,9 @@ class POPUPSYSTEMMODULE_API UPopupSystem : public UGameInstanceSubsystem
 public:
 	static UPopupSystem* Get(const UObject* WorldObject);
 
-	template <typename UStruct>
-	void SubscribePopupToNotificationType() const;
-
 private:
+	//TODO: Find a way to connect the modularity of UNotification with the Popup system, limiting the use of interfaces or rules in general
 
-	UFUNCTION()
-	
-	
-	UPROPERTY()
-	UNotificationSystem* NotificationSystem;
-	
+	UPROPERTY(Transient)
 	TArray<UNotification*> NotificationQueue;
 };
-
-template <typename UStruct>
-void UPopupSystem::SubscribePopupToNotificationType() const
-{
-	check(NotificationSystem)
-	NotificationSystem->AssignOnNotificationAdded(UStruct::StaticStruct(),FNotificationSystemActionNative::CreateUObject(this, ));
-}
