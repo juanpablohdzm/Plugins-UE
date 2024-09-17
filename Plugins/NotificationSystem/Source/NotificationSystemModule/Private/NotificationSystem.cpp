@@ -91,14 +91,14 @@ bool UNotificationSystem::ExistsNotification(const FNotificationHandle& Handle) 
 void UNotificationSystem::AssignOnNotificationAdded(const UScriptStruct* PayloadType, FNotificationSystemAction Action)
 {
 	const FName payloadTypeName = PayloadType ? PayloadType->GetFName() : FName(TEXT("All"));
-	const FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
+	FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
 	AssignOnNotificationAddedImplementation(payloadTypeName, MoveTemp(nativeAction));
 }
 
 void UNotificationSystem::AssignOnNotificationCleared(const UScriptStruct* PayloadType, FNotificationSystemAction Action)
 {
 	const FName payloadTypeName = PayloadType ? PayloadType->GetFName() : FName(TEXT("All"));
-	const FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
+	FNotificationSystemActionNative nativeAction = FNotificationSystemActionNative::CreateUFunction(Action.GetUObject(), Action.GetFunctionName());
 	AssignOnNotificationClearedImplementation(payloadTypeName, MoveTemp(nativeAction));
 }
 
@@ -128,7 +128,7 @@ void UNotificationSystem::BroadcastOnNotificationCleared(const FName& Name, cons
 	}
 }
 
-void UNotificationSystem::AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action)
+void UNotificationSystem::AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, FNotificationSystemActionNative&& Action)
 {
 	if (!OnNotificationAdded.Contains(PayloadTypeName))
 	{
@@ -142,7 +142,7 @@ void UNotificationSystem::AssignOnNotificationAddedImplementation(const FName& P
 	}
 }
 
-void UNotificationSystem::AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action)
+void UNotificationSystem::AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, FNotificationSystemActionNative&& Action)
 {
 	if (!OnNotificationAdded.Contains(PayloadTypeName))
 	{

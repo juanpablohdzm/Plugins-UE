@@ -100,8 +100,8 @@ private:
 	void BroadcastOnNotificationAdded(const FName& Name, const FNotificationHandle& Handle);
 	void BroadcastOnNotificationCleared(const FName& Name, const FNotificationHandle& Handle);
 
-	void AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action);
-	void AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, const FNotificationSystemActionNative&& Action);
+	void AssignOnNotificationAddedImplementation(const FName& PayloadTypeName, FNotificationSystemActionNative&& Action);
+	void AssignOnNotificationClearedImplementation(const FName& PayloadTypeName, FNotificationSystemActionNative&& Action);
 
 	UNotification* CreateNotification(UScriptStruct* ScriptStruct, uint8* StructData, FNotificationHandle& OutNotificationHandle);
 };
